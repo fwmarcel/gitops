@@ -1,0 +1,15 @@
+{
+    "kubernetes": {
+      "fileMatch": ["\\.yaml$"]
+    },
+    "packageRules": [
+      {
+        "description": "Automatically merge minor and patch-level updates",
+        "matchUpdateTypes": ["minor", "patch", "digest"],
+        "automerge": true
+      }
+    ],
+    "timezone": "Europe/Berlin",
+    "platformAutomerge": true
+  }
+  
