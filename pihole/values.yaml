@@ -1,0 +1,80 @@
+pihole:
+  image:
+    tag: 2022.09.2
+  
+  extraEnvVars:
+    TZ: Europe/Berlin
+    REV_SERVER: true
+    REV_SERVER_DOMAIN: home
+    REV_SERVER_TARGET: "10.10.2.1"
+    REV_SERVER_CIDR: "10.10.2.1/24"
+
+  DNS1: "10.10.0.1"
+  DNS2: "10.10.2.1"
+
+  whitelist:
+    - app.adjust.com
+    - app.adjust.net.in
+    - m.exactag.com
+  
+  blacklist: {}
+
+  adlists: 
+    - https://raw.githubusercontent.com/ookangzheng/dbl-oisd-nl/master/dbl.txt
+    - https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts
+    - https://gist.githubusercontent.com/wassname/b594c63222f9e4c83ea23c818440901b/raw/1b0afd2aecf3a099f1681b1cf18fc0e6e2fa116a/Samsung%2520Smart-TV%2520Blocklist%2520Adlist%2520(for%2520PiHole)
+    - https://gist.githubusercontent.com/wassname/78eeaaad299dc4cddd04e372f20a9aa7/raw/d7863a978993e99d9c77c9001008ce670a3b4c29/LG%2520Smart-TV%2520Blocklist%2520Adlist%2520(for%2520PiHole)
+    - https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/SmartTV.txt
+    - https://gist.githubusercontent.com/hkamran80/779019103fcd306979411d44c8d38459/raw/e0f084b396bb8ffcb390c8e7272ae96a6c292d10/SmartTV2.txt
+
+  dnsmasq:
+    customDnsEntries:
+      - address=/local.m-auge.de/10.10.2.175
+  
+    # customCnameEntries:
+    #   - cname=foo.nas,nas
+  serviceDns:
+    mixedService: true
+    type: ClusterIP
+  
+  serviceDhcp:
+    enabled: false
+
+  serviceWeb:
+    http:
+      enabled: true
+    https:
+      enabled: false
+  
+  virtualHost: pihole.local.m-auge.de
+
+  ingress:
+    enabled: true
+    path: /
+    annotations:
+      hajimari.io/enable: "true"
+      hajimari.io/appName: "Pi-Hole"
+      hajimari.io/icon: "pi-hole"
+      kubernetes.io/ingress.class: nginx
+    hosts:
+      -  pihole.local.m-auge.de
+    tls:
+      - secretName: local-m-auge-de-production-cert
+        hosts:
+          - pihole.local.m-auge.de
+
+  persistentVolumeClaim:
+    enabled: false
+  
+  nodeSelector: {}
+
+  monitoring:
+    podMonitor:
+      enabled: true
+
+  podDnsConfig:
+    enabled: true
+    policy: "None"
+    nameservers:
+    - 127.0.0.1
+    - 10.10.0.1
